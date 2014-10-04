@@ -883,3 +883,17 @@ void test_status_ignore__negative_ignores_without_trailing_slash_inside_ignores(
 	cl_assert(found_parent_child2_file);
 }
 
+void test_status_ignore__ignore_with_name_of_dir_in_file(void)
+{
+	int ignored;
+
+	g_repo = cl_git_sandbox_init("empty_standard_repo");
+
+	cl_git_pass(p_mkdir("empty_standard_repo/src", 0777));
+	cl_git_mkfile("empty_standard_repo/src/test.txt", "");
+	cl_git_mkfile("empty_standard_repo/src/.gitignore", "src\n");
+	cl_git_mkfile("empty_standard_repo/.gitignore", "");
+
+	cl_git_pass(git_ignore_path_is_ignored(&ignored, g_repo, "src/test.txt"));
+	cl_assert_equal_i(0, ignored);
+}
